@@ -1,0 +1,6 @@
+{
+  "versionCode": 5,
+  "versionName": "1.4",
+  "url": "https://cdn.jsdelivr.net/gh/keqingwwq-stack/kebiao-zhushou@main/kebiao-zhushou-1.4.apk",
+  "notes": "1.4：修好应用内更新（改用 PackageInstaller 会话安装，不再报「安装包已损坏」）；下载失败自动重试 3 次、最多跟 5 次跳转、校验文件完整性；默认更新地址 = raw（备用 jsDelivr）。"
+}
