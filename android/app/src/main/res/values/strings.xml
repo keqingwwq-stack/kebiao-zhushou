@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">课表助手</string>
+    <string name="import_title">导入课表</string>
+    <string name="web_import_title">网页导入</string>
+    <string name="widget_today">课表 · 今日（2×1）</string>
+    <string name="widget_week">课表 · 全周</string>
+    <string name="widget_desc_today">2×1 圆角卡片：显示当前或下一节课，点一下打开 App</string>
+    <string name="widget_desc_week">显示整周课表网格</string>
+    <string name="widget_today_tall">课表 · 今日（2×3）</string>
+    <string name="widget_desc_today_tall">2×3 圆角卡片：列出今天的全部课程，点一下打开 App</string>
+    <string name="settings_title">课表管理</string>
+    <string name="detail_title">课表详情</string>
+</resources>
