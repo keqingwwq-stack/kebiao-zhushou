@@ -92,47 +92,73 @@ object UpdateChecker {
 
     /** 阻塞下载，返回本地 APK 文件；onStep(done, total) 在下载线程里回调 */
     fun download(apkUrl: String, dest: File, onStep: (Long, Long) -> Unit): File {
-        var conn = (URL(apkUrl).openConnection() as HttpURLConnection).apply {
-            connectTimeout = 15000
-            readTimeout = 30000
-            instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "TimetableWidget/Android")
-        }
-        var code = conn.responseCode
-        if (code in 300..399) {
-            val loc = conn.getHeaderField("Location")
-            conn.disconnect()
-            if (loc.isNullOrEmpty()) throw IllegalStateException("跳转地址为空")
-            conn = (URL(loc).openConnection() as HttpURLConnection).apply {
-                connectTimeout = 15000
-                readTimeout = 30000
-                setRequestProperty("User-Agent", "TimetableWidget/Android")
+        var lastErr: Exception? = null
+        for (attempt in 1..3) {
+            try {
+                fetchToFile(apkUrl, dest, onStep)
+                return dest
+            } catch (e: Exception) {
+                lastErr = e
+                if (dest.exists()) dest.delete()
+                Thread.sleep(900L * attempt)
             }
-            code = conn.responseCode
         }
-        if (code != 200) throw IllegalStateException("下载失败 HTTP $code")
+        throw lastErr ?: IllegalStateException("下载失败")
+    }
+
+    /** 真正干活的一次下载：最多跟 5 次跳转，边下边回调 */
+    private fun fetchToFile(apkUrl: String, dest: File, onStep: (Long, Long) -> Unit) {
+        var url = apkUrl
+        var code = 0
+        var conn: HttpURLConnection? = null
+        for (hop in 1..5) {
+            val c = (URL(url).openConnection() as HttpURLConnection).apply {
+                connectTimeout = 20000
+                readTimeout = 60000
+                instanceFollowRedirects = false
+                setRequestProperty("User-Agent", "TimetableWidget/Android")
+                setRequestProperty("Accept", "*/*")
+                setRequestProperty("Accept-Encoding", "identity")
+            }
+            code = c.responseCode
+            if (code in 300..399) {
+                val loc = c.getHeaderField("Location")
+                c.disconnect()
+                if (loc.isNullOrEmpty()) throw IllegalStateException("跳转地址为空")
+                url = if (loc.startsWith("http")) loc else URL(URL(url), loc).toString()
+                continue
+            }
+            conn = c
+            break
+        }
+        if (conn == null || code != 200) {
+            conn?.disconnect()
+            throw IllegalStateException("下载失败 HTTP $code")
+        }
         val total = conn.contentLengthLong
         if (dest.exists()) dest.delete()
         var done = 0L
         var last = 0L
-        conn.inputStream.use { input ->
-            FileOutputStream(dest).use { out ->
-                val buf = ByteArray(64 * 1024)
-                while (true) {
-                    val n = input.read(buf)
-                    if (n <= 0) break
-                    out.write(buf, 0, n)
-                    done += n
-                    if (done - last > 256 * 1024) {
-                        last = done
-                        onStep(done, total)
+        try {
+            conn.inputStream.use { input ->
+                FileOutputStream(dest).use { out ->
+                    val buf = ByteArray(64 * 1024)
+                    while (true) {
+                        val n = input.read(buf)
+                        if (n <= 0) break
+                        out.write(buf, 0, n)
+                        done += n
+                        if (done - last > 256 * 1024) {
+                            last = done
+                            onStep(done, total)
+                        }
                     }
+                    out.flush()
                 }
-                out.flush()
             }
+        } finally {
+            conn.disconnect()
         }
-        conn.disconnect()
-        onStep(done, total)
-        return dest
+        if (total > 0 && done < total) throw IllegalStateException("下载不完整（$done/$total）")
     }
 }
