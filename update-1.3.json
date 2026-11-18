@@ -1,0 +1,6 @@
+{
+  "versionCode": 4,
+  "versionName": "1.3",
+  "url": "https://cdn.jsdelivr.net/gh/keqingwwq-stack/kebiao-zhushou@main/kebiao-zhushou-1.3.apk",
+  "notes": "1.3：修复下载中断（自动重试 3 次、跟 5 次跳转、校验完整性）；默认更新地址改走 GitHub（jsDelivr），检查更新支持「已是最新版本」提示与一键下载安装；小组件按桌面尺寸自适应；登录失效通知；圆角图标。"
+}
