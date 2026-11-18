@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>网页导入</title>
+<style>
+  body{margin:0;padding:18px;background:#F2F5FA;color:#1D2433;
+       font:14px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  h1{font-size:17px;margin:0 0 10px;color:#1D2433}
+  .k{color:#0069D9;font-weight:600}
+  ol{padding-left:20px;margin:8px 0 14px}
+  li{margin:6px 0}
+  .card{background:#fff;border-radius:12px;padding:14px 16px;
+        box-shadow:0 2px 10px rgba(107,124,147,.10);margin-bottom:12px}
+  .tip{font-size:12.5px;color:#5B6678}
+  .bad{font-size:12.5px;color:#C2410C}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px}
+  .chip{display:inline-block;padding:9px 13px;border-radius:20px;background:#EAF4FF;
+        color:#0069D9;font-size:13px;font-weight:600;text-decoration:none;
+        border:1px solid #D6E8FF}
+  .chip:active{background:#D6E8FF}
+  .chip.ghost{background:#fff;color:#5B6678;border:1px solid #E9EEF5;font-weight:500}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>先选一个入口</h1>
+  <div class="chips">
+    <a class="chip" href="https://ngjw.nyist.edu.cn/admin/caslogin" onclick="go('https://ngjw.nyist.edu.cn/admin/caslogin');return false">南阳理工 · 教务系统</a>
+    <a class="chip ghost" href="https://portal.nyist.edu.cn" onclick="go('https://portal.nyist.edu.cn');return false">网上办事大厅</a>
+  </div>
+  <div class="tip" style="margin-top:8px">
+    点上面任意一个，会在本页打开学校登录页；登录后如果能直接看到课表，点最下面的「识别本页课表」。
+    其它学校就直接在顶部输入框填网址。
+  </div>
+</div>
+<div class="card">
+  <h1>登录 → 找课表 → 识别</h1>
+  <ol>
+    <li>用学号密码登录（南阳理工走统一身份认证）。</li>
+    <li>进到<span class="k">「我的课表」/「课表查询」</span>页面，等课表完全显示出来。</li>
+    <li>点下方的<span class="k">「识别本页课表」</span>，确认课程后写入即可。</li>
+  </ol>
+  <div class="tip">识别只发生在你手机本地，课程数据保存在本机，不会上传到任何服务器。</div>
+</div>
+<div class="card">
+  <h1>识别不了怎么办</h1>
+  <div class="tip">
+    有些教务系统用图片或 Canvas 画课表，程序读不到表格结构。这时有两种办法：
+  </div>
+  <ol>
+    <li>在课表页长按 → 全选 → 复制，回到 App 点<span class="k">「粘贴文字导入（备用）」</span>。</li>
+    <li>或者在电脑上把课表页另存为网页文件，用桌面版组件的「导入教务课表…」处理。</li>
+  </ol>
+  <div class="bad">如果一直停在登录页，多半是学校的 http 被拦截或需要 VPN（校园网），换网络再试。</div>
+</div>
+<script>
+  function go(u){ try{ Dsh.open(u) }catch(e){ location.href = u } }
+</script>
+</body>
+</html>
